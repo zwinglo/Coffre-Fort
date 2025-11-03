@@ -51,8 +51,7 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
 
-        String savedPassword = databaseHelper.getPassword();
-        if (enteredPassword.equals(savedPassword)) {
+        if (databaseHelper.verifyPassword(enteredPassword)) {
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
             finish();

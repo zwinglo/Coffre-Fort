@@ -31,4 +31,6 @@
     <string name="confirm_delete">Êtes-vous sûr de vouloir supprimer ce document?</string>
     <string name="yes">Oui</string>
     <string name="no">Non</string>
+    <string name="title_required">Le titre est requis</string>
+    <string name="content_required">Le contenu est requis</string>
 </resources>

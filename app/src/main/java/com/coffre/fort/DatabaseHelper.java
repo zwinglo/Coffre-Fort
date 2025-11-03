@@ -6,6 +6,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,12 +56,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.delete(TABLE_AUTH, null, null);
         
         ContentValues values = new ContentValues();
-        values.put(COLUMN_PASSWORD, password);
+        values.put(COLUMN_PASSWORD, hashPassword(password));
         db.insert(TABLE_AUTH, null, values);
         db.close();
     }
 
-    public String getPassword() {
+    public boolean verifyPassword(String password) {
+        String storedHash = getPasswordHash();
+        if (storedHash == null) {
+            return false;
+        }
+        return storedHash.equals(hashPassword(password));
+    }
+
+    private String getPasswordHash() {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.query(TABLE_AUTH, new String[]{COLUMN_PASSWORD},
                 null, null, null, null, null);
@@ -73,8 +83,27 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return password;
     }
 
+    private String hashPassword(String password) {
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] hash = digest.digest(password.getBytes());
+            StringBuilder hexString = new StringBuilder();
+            for (byte b : hash) {
+                String hex = Integer.toHexString(0xff & b);
+                if (hex.length() == 1) {
+                    hexString.append('0');
+                }
+                hexString.append(hex);
+            }
+            return hexString.toString();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+            return password; // Fallback to plain text if hashing fails
+        }
+    }
+
     public boolean hasPassword() {
-        return getPassword() != null;
+        return getPasswordHash() != null;
     }
 
     public long addDocument(Document document) {

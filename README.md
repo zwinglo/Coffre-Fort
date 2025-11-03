@@ -125,14 +125,14 @@ app/
 
 ## Sécurité
 
-- Le mot de passe est stocké dans une base de données SQLite locale
-- Tous les documents sont stockés localement sur l'appareil
-- L'application nécessite une authentification à chaque ouverture
-- Les permissions READ_EXTERNAL_STORAGE et WRITE_EXTERNAL_STORAGE sont déclarées pour une évolution future
+- **Hashing du mot de passe** : Le mot de passe est hashé avec SHA-256 avant stockage
+- **Base de données SQLite locale** : Tous les documents sont stockés localement sur l'appareil
+- **Authentification obligatoire** : L'application nécessite une authentification à chaque ouverture
+- **Pas de permissions inutiles** : Aucune permission externe n'est demandée
 
 ## Évolutions Futures Possibles
 
-- [ ] Chiffrement du mot de passe (hash avec SHA-256)
+- [ ] Chiffrement avancé du mot de passe (PBKDF2 ou bcrypt)
 - [ ] Support des fichiers image et média réels
 - [ ] Exportation/Importation de documents
 - [ ] Sauvegarde cloud optionnelle

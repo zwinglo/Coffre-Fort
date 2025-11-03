@@ -55,12 +55,12 @@ public class AddDocumentActivity extends AppCompatActivity {
         String category = categorySpinner.getSelectedItem().toString();
 
         if (TextUtils.isEmpty(title)) {
-            Toast.makeText(this, "Le titre est requis", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.title_required, Toast.LENGTH_SHORT).show();
             return;
         }
 
         if (TextUtils.isEmpty(content)) {
-            Toast.makeText(this, "Le contenu est requis", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.content_required, Toast.LENGTH_SHORT).show();
             return;
         }
 
