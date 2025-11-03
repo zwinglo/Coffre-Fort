@@ -1,0 +1,2 @@
+rootProject.name = "Coffre Fort"
+include ':app'
