@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity implements DocumentAdapter.O
         documentsRecyclerView.setAdapter(documentAdapter);
 
         addDocumentFab.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, AddDocumentActivity.class);
+            Intent intent = new Intent(this, AddDocumentActivity.class);
             startActivity(intent);
         });
     }

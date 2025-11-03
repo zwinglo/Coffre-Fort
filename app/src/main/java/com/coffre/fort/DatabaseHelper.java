@@ -86,7 +86,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private String hashPassword(String password) {
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
-            byte[] hash = digest.digest(password.getBytes());
+            byte[] hash = digest.digest(password.getBytes(java.nio.charset.StandardCharsets.UTF_8));
             StringBuilder hexString = new StringBuilder();
             for (byte b : hash) {
                 String hex = Integer.toHexString(0xff & b);
@@ -97,8 +97,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             }
             return hexString.toString();
         } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-            return password; // Fallback to plain text if hashing fails
+            throw new RuntimeException("SHA-256 algorithm not available", e);
         }
     }
 
