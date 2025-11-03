@@ -10,4 +10,9 @@
     <color name="primary">#2196F3</color>
     <color name="primary_dark">#1976D2</color>
     <color name="accent">#FFC107</color>
+    <color name="category_text_color">#5C6BC0</color>
+    <color name="category_images_color">#4CAF50</color>
+    <color name="category_media_color">#AB47BC</color>
+    <color name="category_other_color">#FFB74D</color>
+    <color name="category_sms_color">#26A69A</color>
 </resources>
