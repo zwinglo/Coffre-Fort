@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="document_categories">
+        <item>@string/category_text</item>
+        <item>@string/category_images</item>
+        <item>@string/category_media</item>
+        <item>@string/category_other</item>
+        <item>@string/category_sms</item>
+    </string-array>
+</resources>

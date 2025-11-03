@@ -13,7 +13,7 @@ import java.util.List;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "coffre_fort.db";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
     private static final String TABLE_DOCUMENTS = "documents";
     private static final String COLUMN_ID = "id";
@@ -21,6 +21,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String COLUMN_CONTENT = "content";
     private static final String COLUMN_CATEGORY = "category";
     private static final String COLUMN_TIMESTAMP = "timestamp";
+    private static final String COLUMN_ATTACHMENT_URI = "attachment_uri";
+    private static final String COLUMN_ATTACHMENT_MIME = "attachment_mime";
+    private static final String COLUMN_ATTACHMENT_NAME = "attachment_name";
 
     private static final String TABLE_AUTH = "auth";
     private static final String COLUMN_PASSWORD = "password";
@@ -36,7 +39,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + COLUMN_TITLE + " TEXT, "
                 + COLUMN_CONTENT + " TEXT, "
                 + COLUMN_CATEGORY + " TEXT, "
-                + COLUMN_TIMESTAMP + " INTEGER)";
+                + COLUMN_TIMESTAMP + " INTEGER, "
+                + COLUMN_ATTACHMENT_URI + " TEXT, "
+                + COLUMN_ATTACHMENT_MIME + " TEXT, "
+                + COLUMN_ATTACHMENT_NAME + " TEXT)";
         db.execSQL(createDocumentsTable);
 
         String createAuthTable = "CREATE TABLE " + TABLE_AUTH + " ("
@@ -46,9 +52,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_DOCUMENTS);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_AUTH);
-        onCreate(db);
+        if (oldVersion < 2) {
+            db.execSQL("ALTER TABLE " + TABLE_DOCUMENTS + " ADD COLUMN " + COLUMN_ATTACHMENT_URI + " TEXT");
+            db.execSQL("ALTER TABLE " + TABLE_DOCUMENTS + " ADD COLUMN " + COLUMN_ATTACHMENT_MIME + " TEXT");
+            db.execSQL("ALTER TABLE " + TABLE_DOCUMENTS + " ADD COLUMN " + COLUMN_ATTACHMENT_NAME + " TEXT");
+        }
     }
 
     public void setPassword(String password) {
@@ -112,6 +120,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(COLUMN_CONTENT, document.getContent());
         values.put(COLUMN_CATEGORY, document.getCategory());
         values.put(COLUMN_TIMESTAMP, document.getTimestamp());
+        values.put(COLUMN_ATTACHMENT_URI, document.getAttachmentUri());
+        values.put(COLUMN_ATTACHMENT_MIME, document.getAttachmentMimeType());
+        values.put(COLUMN_ATTACHMENT_NAME, document.getAttachmentName());
         
         long id = db.insert(TABLE_DOCUMENTS, null, values);
         db.close();
@@ -131,7 +142,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_TITLE)),
                     cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_CONTENT)),
                     cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_CATEGORY)),
-                    cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_TIMESTAMP))
+                    cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_TIMESTAMP)),
+                    cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_ATTACHMENT_URI)),
+                    cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_ATTACHMENT_MIME)),
+                    cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_ATTACHMENT_NAME))
                 );
                 documents.add(document);
             } while (cursor.moveToNext());
@@ -155,7 +169,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_TITLE)),
                     cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_CONTENT)),
                     cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_CATEGORY)),
-                    cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_TIMESTAMP))
+                    cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_TIMESTAMP)),
+                    cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_ATTACHMENT_URI)),
+                    cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_ATTACHMENT_MIME)),
+                    cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_ATTACHMENT_NAME))
                 );
                 documents.add(document);
             } while (cursor.moveToNext());
@@ -178,7 +195,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_TITLE)),
                 cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_CONTENT)),
                 cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_CATEGORY)),
-                cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_TIMESTAMP))
+                cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_TIMESTAMP)),
+                cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_ATTACHMENT_URI)),
+                cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_ATTACHMENT_MIME)),
+                cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_ATTACHMENT_NAME))
             );
         }
         cursor.close();
