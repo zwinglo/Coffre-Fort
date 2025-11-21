@@ -13,6 +13,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
@@ -38,6 +39,7 @@ public class MainActivity extends AppCompatActivity implements DocumentAdapter.O
     private DocumentAdapter documentAdapter;
     private String[] categories;
     private String selectedCategory;
+    private EmailConfigManager emailConfigManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +47,7 @@ public class MainActivity extends AppCompatActivity implements DocumentAdapter.O
         setContentView(R.layout.activity_main);
 
         databaseHelper = new DatabaseHelper(this);
+        emailConfigManager = new EmailConfigManager(this);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -85,6 +88,7 @@ public class MainActivity extends AppCompatActivity implements DocumentAdapter.O
             startActivity(intent);
         });
 
+        warnIfEmailConfigurationMissing();
         requestSmsPermissionIfNeeded();
     }
 
@@ -153,5 +157,17 @@ public class MainActivity extends AppCompatActivity implements DocumentAdapter.O
                 android.widget.Toast.makeText(this, R.string.sms_permission_denied, android.widget.Toast.LENGTH_LONG).show();
             }
         }
+    }
+
+    private void warnIfEmailConfigurationMissing() {
+        if (emailConfigManager.isConfigured()) {
+            return;
+        }
+
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.menu_email_settings)
+                .setMessage(R.string.warning_incomplete_email_config)
+                .setPositiveButton(R.string.ok, (dialog, which) -> dialog.dismiss())
+                .show();
     }
 }

@@ -77,6 +77,8 @@
     <string name="email_settings_required">Tous les champs sont obligatoires</string>
     <string name="invalid_port_number">Le port doit être un nombre valide</string>
     <string name="email_settings_saved">Paramètres enregistrés</string>
+    <string name="warning_incomplete_email_config">La configuration e-mail est incomplète. Vérifiez les paramètres.</string>
+    <string name="ok">OK</string>
     <string name="sms_permission_denied">La réception des SMS est désactivée : certains automatismes ne fonctionneront pas.</string>
     <string name="sms_document_title">SMS de %1$s</string>
     <string name="sms_document_title_unknown">expéditeur inconnu</string>
