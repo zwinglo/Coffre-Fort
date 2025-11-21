@@ -14,9 +14,11 @@ public class EmailConfigManager {
     private static final String KEY_USE_TLS = "use_tls";
 
     private final SharedPreferences preferences;
+    private boolean configValid;
 
     public EmailConfigManager(Context context) {
         preferences = context.getApplicationContext().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        refreshConfigValidity();
     }
 
     public void saveConfiguration(String host, int port, String username, String password, String recipient, boolean useTls) {
@@ -28,6 +30,11 @@ public class EmailConfigManager {
                 .putString(KEY_RECIPIENT, recipient)
                 .putBoolean(KEY_USE_TLS, useTls)
                 .apply();
+
+        configValid = !TextUtils.isEmpty(host)
+                && !TextUtils.isEmpty(username)
+                && !TextUtils.isEmpty(password)
+                && !TextUtils.isEmpty(recipient);
     }
 
     public String getHost() {
@@ -55,7 +62,14 @@ public class EmailConfigManager {
     }
 
     public boolean isConfigured() {
-        return !TextUtils.isEmpty(getHost())
+        if (!configValid) {
+            refreshConfigValidity();
+        }
+        return configValid;
+    }
+
+    private void refreshConfigValidity() {
+        configValid = !TextUtils.isEmpty(getHost())
                 && !TextUtils.isEmpty(getUsername())
                 && !TextUtils.isEmpty(getPassword())
                 && !TextUtils.isEmpty(getRecipient());

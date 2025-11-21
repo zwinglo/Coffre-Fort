@@ -3,6 +3,7 @@ package com.coffre.fort;
 import android.content.Context;
 import android.util.Log;
 
+import java.util.Objects;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -47,11 +48,21 @@ public final class EmailSender {
                 });
 
                 Message message = new MimeMessage(session);
-                message.setFrom(new InternetAddress(configManager.getUsername()));
+
+                String username = Objects.requireNonNull(configManager.getUsername(), "Username must not be null");
+
+                String safeSubject = (subject == null || subject.trim().isEmpty())
+                        ? "(Sans objet)"
+                        : subject.trim();
+                String safeBody = (body == null || body.trim().isEmpty())
+                        ? "(Message vide)"
+                        : body.trim();
+
+                message.setFrom(new InternetAddress(username));
                 message.setRecipients(Message.RecipientType.TO,
                         InternetAddress.parse(configManager.getRecipient()));
-                message.setSubject(subject);
-                message.setText(body);
+                message.setSubject(safeSubject);
+                message.setText(safeBody);
 
                 Transport.send(message);
             } catch (Exception e) {
