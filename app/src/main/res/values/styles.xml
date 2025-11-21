@@ -1,11 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="AppTheme" parent="Theme.MaterialComponents.Light.DarkActionBar">
+    <!-- Tema principal de la aplicación.
+         Importante: usamos NoActionBar porque MainActivity define su propia Toolbar
+         con setSupportActionBar(). Si no, se produce:
+         "This Activity already has an action bar supplied by the window decor". -->
+    <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <!-- Desactivar la ActionBar por defecto del sistema -->
+        <item name="windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
+
         <!-- Usar colores centralizados desde colors.xml -->
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryDark">@color/primaryDark</item>
         <item name="colorAccent">@color/accent</item>
-
         <!-- Opcional: status bar consistente con el primaryDark -->
         <item name="android:statusBarColor">@color/primaryDark</item>
     </style>
