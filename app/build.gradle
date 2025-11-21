@@ -19,6 +19,14 @@ android {
         }
     }
 
+    packaging {
+        resources {
+            // Fix META-INF duplicate file conflicts
+            excludes += "META-INF/NOTICE.md"
+            excludes += "META-INF/DEPENDENCIES"
+        }
+    }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
@@ -32,10 +40,5 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview:1.3.1'
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'androidx.activity:activity:1.8.2'
-    implementation('com.sun.mail:android-mail:1.6.7') {
-        exclude group: 'org.jetbrains.kotlin'
-    }
-    implementation('com.sun.mail:android-activation:1.6.7') {
-        exclude group: 'org.jetbrains.kotlin'
-    }
+    implementation 'com.sun.mail:jakarta.mail:2.0.1'
 }
