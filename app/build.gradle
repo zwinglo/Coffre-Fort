@@ -19,6 +19,12 @@ android {
         }
     }
 
+    sourceSets {
+        main {
+            res.srcDir "$buildDir/generated/res/app"
+        }
+    }
+
     packaging {
         resources {
             // Fix META-INF duplicate file conflicts
@@ -34,6 +40,50 @@ android {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
     }
+}
+
+def mediaDir = file("$rootDir/Media")
+def generatedResDir = file("$buildDir/generated/res/app")
+
+tasks.register("copyMediaAssets", Copy) {
+    description = "Copies design assets from Media into generated resources"
+    group = "Assets"
+
+    into(generatedResDir)
+
+    from(mediaDir) {
+        include "Cerradura.png"
+        into "drawable"
+        rename { "cerradura.png" }
+    }
+
+    from("${mediaDir}/Logo/android/res") {
+        include "**/*.png"
+        rename { name ->
+            name
+                .replace("Logo_background", "ic_launcher_background")
+                .replace("Logo_foreground", "ic_launcher_foreground")
+                .replace("Logo_monochrome", "ic_launcher_monochrome")
+                .replace("Logo", "ic_launcher")
+                .toLowerCase()
+        }
+    }
+
+    from("${mediaDir}/Logo/android/res") {
+        include "**/*.png"
+        rename { name ->
+            name
+                .replace("Logo_background", "ic_launcher_round_background")
+                .replace("Logo_foreground", "ic_launcher_round_foreground")
+                .replace("Logo_monochrome", "ic_launcher_round_monochrome")
+                .replace("Logo", "ic_launcher_round")
+                .toLowerCase()
+        }
+    }
+}
+
+tasks.matching { it.name == "preBuild" }.configureEach {
+    dependsOn tasks.named("copyMediaAssets")
 }
 
 // Éviter les doublons entre kotlin-stdlib 1.8.22 et les vieux modules jdk7/jdk8 en 1.6.21
