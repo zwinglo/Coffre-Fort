@@ -128,6 +128,10 @@ Sécurité : %3$s</string>
     <string name="sms_permission_denied">La réception des SMS est désactivée : certains automatismes ne fonctionneront pas.</string>
     <string name="sms_document_title">SMS de %1$s</string>
     <string name="sms_document_title_unknown">expéditeur inconnu</string>
+    <string name="sms_document_content">Expéditeur : %1$s
+Date : %2$s
+
+%3$s</string>
     <string name="sms_email_body">Expéditeur : %1$s
 Date : %2$s
 

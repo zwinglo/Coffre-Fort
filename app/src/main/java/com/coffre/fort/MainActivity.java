@@ -1,7 +1,10 @@
 package com.coffre.fort;
 
 import android.Manifest;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.Menu;
@@ -40,6 +43,7 @@ public class MainActivity extends AppCompatActivity implements DocumentAdapter.O
     private String[] categories;
     private String selectedCategory;
     private EmailConfigManager emailConfigManager;
+    private BroadcastReceiver smsSavedReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,12 +94,26 @@ public class MainActivity extends AppCompatActivity implements DocumentAdapter.O
 
         warnIfEmailConfigurationMissing();
         requestSmsPermissionIfNeeded();
+
+        smsSavedReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                loadDocuments();
+            }
+        };
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         loadDocuments();
+        registerReceiver(smsSavedReceiver, new IntentFilter(SmsReceiver.ACTION_SMS_SAVED));
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(smsSavedReceiver);
     }
 
     @Override
