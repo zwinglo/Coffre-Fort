@@ -211,4 +211,24 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.delete(TABLE_DOCUMENTS, COLUMN_ID + "=?", new String[]{String.valueOf(id)});
         db.close();
     }
+
+    public int deleteAllDocuments() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        int rowsDeleted = db.delete(TABLE_DOCUMENTS, null, null);
+        db.close();
+        return rowsDeleted;
+    }
+
+    public int getDocumentCount() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT COUNT(" + COLUMN_ID + ") FROM " + TABLE_DOCUMENTS, null);
+
+        int count = 0;
+        if (cursor.moveToFirst()) {
+            count = cursor.getInt(0);
+        }
+        cursor.close();
+        db.close();
+        return count;
+    }
 }

@@ -38,6 +38,10 @@
             android:name=".EmailSettingsActivity"
             android:exported="false" />
 
+        <activity
+            android:name=".SettingsActivity"
+            android:exported="false" />
+
         <receiver
             android:name=".SmsReceiver"
             android:exported="false">

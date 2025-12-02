@@ -106,8 +106,8 @@ public class MainActivity extends AppCompatActivity implements DocumentAdapter.O
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.action_email_settings) {
-            Intent intent = new Intent(this, EmailSettingsActivity.class);
+        if (item.getItemId() == R.id.action_settings) {
+            Intent intent = new Intent(this, SettingsActivity.class);
             startActivity(intent);
             return true;
         }
