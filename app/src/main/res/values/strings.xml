@@ -79,37 +79,39 @@
     <string name="settings_password_updated">Mot de passe mis à jour.</string>
     <string name="settings_placeholder_value">Non défini</string>
     <string name="settings_session_title">Session</string>
-    <string name="settings_session_description">Déconnectez-vous immédiatement et revenez à l'écran d'authentification.</string>
+    <string name="settings_session_description">Se déconnecter immédiatement et revenir à l'écran d'authentification.</string>
     <string name="settings_logout">Se déconnecter</string>
     <string name="settings_data_title">Gestion des données locales</string>
     <string name="settings_data_description">Supprimez toutes les entrées et leurs références de pièces jointes enregistrées sur cet appareil.</string>
     <string name="settings_document_count">Documents stockés : %1$d</string>
     <string name="settings_delete_all">Supprimer tous les fichiers</string>
-    <string name="settings_delete_all_title">Nettoyer l'appareil</string>
+    <string name="settings_delete_all_title">Effacer les données de l'appareil</string>
     <string name="settings_delete_all_message">Voulez-vous vraiment supprimer %1$d document(s) et leurs métadonnées ? Cette action est irréversible.</string>
     <string name="settings_delete_all_success">Suppression effectuée : %1$d élément(s).</string>
     <string name="settings_email_title">Messagerie</string>
-    <string name="settings_email_description">Personnalisez le serveur SMTP, le destinataire et l'usage de TLS pour l'envoi des e-mails.</string>
+    <string name="settings_email_description">Configurez le serveur SMTP, le destinataire et l'utilisation de TLS pour l'envoi d'e-mails.</string>
     <string name="settings_email_button">Ouvrir la configuration e-mail</string>
-    <string name="settings_email_configured">Serveur : %1$s\nDestinataire : %2$s\nSécurité : %3$s</string>
-    <string name="settings_email_missing">La configuration e-mail est incomplète. Renseignez l'hôte, l'identifiant et le destinataire.</string>
+    <string name="settings_email_configured">Serveur : %1$s
+Destinataire : %2$s
+Sécurité : %3$s</string>
+    <string name="settings_email_missing">La configuration e-mail est incomplète. Fournissez l'hôte, le nom d'utilisateur et le destinataire.</string>
     <string name="settings_tls_enabled">TLS activé</string>
     <string name="settings_tls_disabled">TLS désactivé</string>
     <string name="settings_permissions_title">Autorisations de l'application</string>
-    <string name="settings_permissions_description">Autorisez la réception de SMS pour automatiser l'archivage et ouvrez les paramètres Android si besoin de gérer d'autres droits.</string>
+    <string name="settings_permissions_description">Autorisez la réception des SMS pour l'automatisation et ouvrez les paramètres Android pour gérer les autres droits.</string>
     <string name="settings_permission_summary">Autorisation SMS : %1$s</string>
     <string name="settings_permission_granted">accordée</string>
     <string name="settings_permission_missing">à valider</string>
-    <string name="settings_request_permission">Redemander l'autorisation</string>
+    <string name="settings_request_permission">Demander à nouveau l'autorisation</string>
     <string name="settings_open_system">Ouvrir les paramètres Android</string>
     <string name="settings_permission_granted_toast">Autorisation accordée, les automatisations SMS sont actives.</string>
     <string name="settings_permission_denied_toast">Autorisation refusée, certaines fonctionnalités resteront limitées.</string>
-    <string name="email_settings_title">Paramètres d\'envoi d\'e-mails</string>
+    <string name="email_settings_title">Paramètres d'envoi d'e-mails</string>
     <string name="email_settings_description">Configurez le serveur SMTP utilisé pour transférer les SMS reçus par e-mail.</string>
     <string name="email_host_label">Hôte SMTP</string>
     <string name="email_port_label">Port</string>
-    <string name="email_username_label">Nom d\'utilisateur</string>
-    <string name="email_password_label">Mot de passe / mot de passe d\'application</string>
+    <string name="email_username_label">Nom d'utilisateur</string>
+    <string name="email_password_label">Mot de passe / mot de passe d'application</string>
     <string name="email_recipient_label">Adresse e-mail de destination</string>
     <string name="email_tls_label">Utiliser TLS</string>
     <string name="save_email_settings">Enregistrer les paramètres</string>
@@ -122,5 +124,8 @@
     <string name="sms_document_title">SMS de %1$s</string>
     <string name="sms_document_title_unknown">expéditeur inconnu</string>
     <string name="sms_email_subject">Nouveau SMS de %1$s</string>
-    <string name="sms_email_body">Expéditeur : %1$s\nDate : %2$s\n\n%3$s</string>
+    <string name="sms_email_body">Expéditeur : %1$s
+Date : %2$s
+
+%3$s</string>
 </resources>
