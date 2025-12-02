@@ -53,6 +53,7 @@ public class SettingsActivity extends AppCompatActivity {
         Button logoutButton = findViewById(R.id.logoutButton);
         Button deleteAllButton = findViewById(R.id.deleteAllButton);
         Button emailSettingsButton = findViewById(R.id.emailSettingsButton);
+        Button mailTestButton = findViewById(R.id.mailTestButton);
         Button requestPermissionButton = findViewById(R.id.requestPermissionButton);
         Button openSystemSettingsButton = findViewById(R.id.openSystemSettingsButton);
 
@@ -60,6 +61,7 @@ public class SettingsActivity extends AppCompatActivity {
         logoutButton.setOnClickListener(v -> logout());
         deleteAllButton.setOnClickListener(v -> confirmDeleteAll());
         emailSettingsButton.setOnClickListener(v -> openEmailSettings());
+        mailTestButton.setOnClickListener(v -> sendTestEmail());
         requestPermissionButton.setOnClickListener(v -> requestCriticalPermissions());
         openSystemSettingsButton.setOnClickListener(v -> openSystemPermissions());
 
@@ -121,6 +123,18 @@ public class SettingsActivity extends AppCompatActivity {
     private void openEmailSettings() {
         Intent intent = new Intent(this, EmailSettingsActivity.class);
         startActivity(intent);
+    }
+
+    private void sendTestEmail() {
+        if (!emailConfigManager.isConfigured()) {
+            Toast.makeText(this, R.string.email_test_missing_config, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        EmailSender.sendEmail(this,
+                getString(R.string.email_test_subject),
+                getString(R.string.email_test_body));
+        Toast.makeText(this, R.string.email_test_started, Toast.LENGTH_SHORT).show();
     }
 
     private void refreshEmailSummary() {

@@ -241,6 +241,9 @@ public class AddDocumentActivity extends AppCompatActivity {
         document.setAttachmentName(selectedAttachmentName);
 
         databaseHelper.addDocument(document);
+        if (category.equals(getString(R.string.category_sms))) {
+            SmsEmailDispatcher.dispatch(this, document, title);
+        }
         Toast.makeText(this, R.string.document_saved, Toast.LENGTH_SHORT).show();
         finish();
     }
