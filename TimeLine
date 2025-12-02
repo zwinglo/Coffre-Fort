@@ -1,0 +1,18 @@
+Chronologie du projet Coffre-Fort
+
+- Initial commit : dépôt Android de base créé pour Coffre-Fort (ajout du squelette .gitignore et README.md).
+- Élaboration du plan initial pour l'application et ses objectifs (documentation du plan dans README.md).
+- Construction de l'application complète : authentification, gestion des documents, RecyclerView et base SQLite opérationnelle (AndroidManifest.xml, DatabaseHelper.java, LoginActivity.java, MainActivity.java et layouts associés).
+- Ajustements Gradle et documentation : corrections de configuration et enrichissement du README (app/build.gradle, gradle.properties, README.md).
+- Renforcement de la sécurité : hachage SHA-256, suppression de permissions inutiles et ressources de chaînes sécurisées (LoginActivity.java, DatabaseHelper.java, AndroidManifest.xml, res/values/strings.xml).
+- Corrections de hachage : encodage UTF-8 et gestion sécurisée des échecs lors de la vérification du mot de passe (DatabaseHelper.java, LoginActivity.java).
+- Automatisation SMS/email et pièces jointes : support d'attachements et transfert automatique des SMS vers l'email (DocumentAdapter.java, DatabaseHelper.java, MailSender.java, res/layout/item_document.xml).
+- Mise en conformité Android/Gradle : corrections répétées du chemin Java home et nettoyage des dépendances Kotlin et ressources XML (gradle.properties, local.properties, app/build.gradle, res/values/strings.xml).
+- Résolution des conflits de packaging email : passage à Jakarta Mail et validation renforcée de l'envoi (app/build.gradle, MailSender.java, proguard-rules.pro).
+- Rafraîchissement UI : palette de couleurs centralisée, thème NoActionBar et intégration du logo/fond d'écran (res/values/colors.xml, res/values/styles.xml, res/drawable/background.png, Media assets).
+- Écran Paramètres étendu : gestion du mot de passe, compteur de documents, autorisations SMS/MMS et configuration email traduite (SettingsActivity.java, activity_settings.xml, res/values/strings.xml).
+- Automatisation SMS avancée : transfert automatique, bouton de test mail et récepteurs exportés pour messages sauvegardés et entrants (AndroidManifest.xml, SmsReceiver.java, SettingsActivity.java).
+- Ingération automatique des SMS vers l'application et rafraîchissement de la liste locale (SmsReceiver.java, DatabaseHelper.java, MainActivity.java).
+- Support des MMS et messages multimédias : récupération du contenu et des pièces jointes (MmsReceiver.java, MmsService.java, DatabaseHelper.java).
+- Sauvegarde automatique des SMS et MMS : synchronisation et archivage complet dans la base locale (BackupWorker.java, SmsReceiver.java, MmsReceiver.java).
+- Documentation finale : README mis à jour pour détailler l'automatisation SMS/MMS, le transfert email, la base de données et la sécurité (README.md).
