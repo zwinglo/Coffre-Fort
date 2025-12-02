@@ -8,8 +8,6 @@ import android.provider.Telephony;
 import android.telephony.SmsMessage;
 import android.text.TextUtils;
 
-import java.text.DateFormat;
-import java.util.Date;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -74,19 +72,6 @@ public class SmsReceiver extends BroadcastReceiver {
         databaseHelper.addDocument(document);
         databaseHelper.close();
 
-        sendEmailNotification(context, sender, messageBody.toString());
-    }
-
-    private void sendEmailNotification(Context context, String sender, String messageBody) {
-        EmailConfigManager configManager = new EmailConfigManager(context);
-        if (!configManager.isConfigured()) {
-            return;
-        }
-
-        DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT);
-        String formattedDate = dateFormat.format(new Date());
-        String subject = context.getString(R.string.sms_email_subject, sender);
-        String body = context.getString(R.string.sms_email_body, sender, formattedDate, messageBody);
-        EmailSender.sendEmail(context, subject, body);
+        SmsEmailDispatcher.dispatch(context, document, sender);
     }
 }

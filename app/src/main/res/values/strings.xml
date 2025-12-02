@@ -91,6 +91,7 @@
     <string name="settings_email_title">Messagerie</string>
     <string name="settings_email_description">Configurez le serveur SMTP, le destinataire et l’utilisation de TLS pour l’envoi d’e-mails.</string>
     <string name="settings_email_button">Ouvrir la configuration e-mail</string>
+    <string name="settings_email_test_button">Mail test</string>
     <string name="settings_email_configured">Serveur : %1$s
 Destinataire : %2$s
 Sécurité : %3$s</string>
@@ -118,14 +119,18 @@ Sécurité : %3$s</string>
     <string name="email_settings_required">Tous les champs sont obligatoires</string>
     <string name="invalid_port_number">Le port doit être un nombre valide</string>
     <string name="email_settings_saved">Paramètres enregistrés</string>
+    <string name="email_test_subject">SMS - test configuration</string>
+    <string name="email_test_body">Ce message de test confirme que la configuration SMTP de Coffre-Fort fonctionne. Aucun SMS n’est concerné.</string>
+    <string name="email_test_started">E-mail de test en cours d’envoi…</string>
+    <string name="email_test_missing_config">Complétez la configuration e-mail avant d’envoyer un test.</string>
     <string name="warning_incomplete_email_config">La configuration e-mail est incomplète. Vérifiez les paramètres.</string>
     <string name="ok">OK</string>
     <string name="sms_permission_denied">La réception des SMS est désactivée : certains automatismes ne fonctionneront pas.</string>
     <string name="sms_document_title">SMS de %1$s</string>
     <string name="sms_document_title_unknown">expéditeur inconnu</string>
-    <string name="sms_email_subject">Nouveau SMS de %1$s</string>
     <string name="sms_email_body">Expéditeur : %1$s
 Date : %2$s
 
 %3$s</string>
+    <string name="sms_email_empty_body_placeholder">(aucun contenu textuel fourni)</string>
 </resources>
