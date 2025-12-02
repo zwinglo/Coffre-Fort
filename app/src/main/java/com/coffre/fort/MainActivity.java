@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Build;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -107,7 +108,12 @@ public class MainActivity extends AppCompatActivity implements DocumentAdapter.O
     protected void onResume() {
         super.onResume();
         loadDocuments();
-        registerReceiver(smsSavedReceiver, new IntentFilter(SmsReceiver.ACTION_SMS_SAVED));
+        IntentFilter smsSavedFilter = new IntentFilter(SmsReceiver.ACTION_SMS_SAVED);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            registerReceiver(smsSavedReceiver, smsSavedFilter, Context.RECEIVER_NOT_EXPORTED);
+        } else {
+            registerReceiver(smsSavedReceiver, smsSavedFilter);
+        }
     }
 
     @Override
