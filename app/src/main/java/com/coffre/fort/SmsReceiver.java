@@ -11,6 +11,8 @@ import android.text.TextUtils;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import com.coffre.fort.MessageSyncManager;
+
 public class SmsReceiver extends BroadcastReceiver {
 
     public static final String ACTION_SMS_SAVED = "com.coffre.fort.ACTION_SMS_SAVED";
@@ -67,6 +69,8 @@ public class SmsReceiver extends BroadcastReceiver {
         if (TextUtils.isEmpty(sender)) {
             sender = context.getString(R.string.sms_document_title_unknown);
         }
+
+        new MessageSyncManager(context).synchronizeMessages();
 
         Document document = new Document();
         document.setTitle(context.getString(R.string.message_document_title, sender));

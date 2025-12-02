@@ -17,4 +17,10 @@ public final class MessageFormatter {
                 .format(new Date(timestamp == 0L ? System.currentTimeMillis() : timestamp));
         return context.getString(R.string.message_document_content, sender, formattedDate, safeBody);
     }
+
+    public static String formatTimestamp(long timestamp) {
+        long safeTimestamp = timestamp == 0L ? System.currentTimeMillis() : timestamp;
+        return DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT, Locale.getDefault())
+                .format(new Date(safeTimestamp));
+    }
 }
