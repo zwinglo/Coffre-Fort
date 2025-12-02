@@ -33,6 +33,12 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements DocumentAdapter.OnDocumentClickListener {
 
     private static final int REQUEST_SMS_PERMISSION = 1001;
+    private static final String[] MESSAGE_PERMISSIONS = new String[]{
+            Manifest.permission.RECEIVE_SMS,
+            Manifest.permission.RECEIVE_MMS,
+            Manifest.permission.RECEIVE_WAP_PUSH,
+            Manifest.permission.READ_SMS
+    };
 
     private RecyclerView documentsRecyclerView;
     private TextView emptyTextView;
@@ -165,10 +171,11 @@ public class MainActivity extends AppCompatActivity implements DocumentAdapter.O
     }
 
     private void requestSmsPermissionIfNeeded() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECEIVE_SMS)
-                != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.RECEIVE_SMS}, REQUEST_SMS_PERMISSION);
+        for (String permission : MESSAGE_PERMISSIONS) {
+            if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, MESSAGE_PERMISSIONS, REQUEST_SMS_PERMISSION);
+                break;
+            }
         }
     }
 
@@ -177,7 +184,18 @@ public class MainActivity extends AppCompatActivity implements DocumentAdapter.O
                                            @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == REQUEST_SMS_PERMISSION) {
-            if (grantResults.length == 0 || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+            boolean granted = true;
+            if (grantResults.length == 0) {
+                granted = false;
+            } else {
+                for (int result : grantResults) {
+                    if (result != PackageManager.PERMISSION_GRANTED) {
+                        granted = false;
+                        break;
+                    }
+                }
+            }
+            if (!granted) {
                 android.widget.Toast.makeText(this, R.string.sms_permission_denied, android.widget.Toast.LENGTH_LONG).show();
             }
         }

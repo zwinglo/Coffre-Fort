@@ -8,10 +8,6 @@ import android.provider.Telephony;
 import android.telephony.SmsMessage;
 import android.text.TextUtils;
 
-import java.text.DateFormat;
-import java.util.Date;
-import java.util.Locale;
-
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -73,9 +69,9 @@ public class SmsReceiver extends BroadcastReceiver {
         }
 
         Document document = new Document();
-        document.setTitle(context.getString(R.string.sms_document_title, sender));
-        document.setCategory(context.getString(R.string.category_sms));
-        document.setContent(buildDocumentContent(context, sender, messageTimestamp, messageBody.toString()));
+        document.setTitle(context.getString(R.string.message_document_title, sender));
+        document.setCategory(context.getString(R.string.category_messages));
+        document.setContent(MessageFormatter.buildDocumentContent(context, sender, messageTimestamp, messageBody.toString()));
         document.setTimestamp(messageTimestamp == 0L ? System.currentTimeMillis() : messageTimestamp);
 
         DatabaseHelper databaseHelper = new DatabaseHelper(context);
@@ -83,7 +79,7 @@ public class SmsReceiver extends BroadcastReceiver {
         databaseHelper.close();
         document.setId((int) documentId);
 
-        SmsEmailDispatcher.dispatch(context, document, sender);
+        MessageEmailDispatcher.dispatch(context, document, sender, MessageEmailDispatcher.MessageType.SMS);
 
         Intent refreshIntent = new Intent(ACTION_SMS_SAVED);
         refreshIntent.setPackage(context.getPackageName());
@@ -91,9 +87,4 @@ public class SmsReceiver extends BroadcastReceiver {
         context.sendBroadcast(refreshIntent);
     }
 
-    private String buildDocumentContent(Context context, String sender, long timestamp, String messageBody) {
-        String formattedDate = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT, Locale.getDefault())
-                .format(new Date(timestamp == 0L ? System.currentTimeMillis() : timestamp));
-        return context.getString(R.string.sms_document_content, sender, formattedDate, messageBody);
-    }
 }
