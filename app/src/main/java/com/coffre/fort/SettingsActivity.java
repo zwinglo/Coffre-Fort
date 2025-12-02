@@ -22,6 +22,12 @@ import com.google.android.material.textfield.TextInputEditText;
 public class SettingsActivity extends AppCompatActivity {
 
     private static final int REQUEST_PERMISSION_SMS = 2002;
+    private static final String[] MESSAGE_PERMISSIONS = new String[]{
+            Manifest.permission.RECEIVE_SMS,
+            Manifest.permission.RECEIVE_MMS,
+            Manifest.permission.RECEIVE_WAP_PUSH,
+            Manifest.permission.READ_SMS
+    };
 
     private DatabaseHelper databaseHelper;
     private EmailConfigManager emailConfigManager;
@@ -158,8 +164,7 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     private void refreshPermissionSummary() {
-        boolean smsGranted = ContextCompat.checkSelfPermission(this, Manifest.permission.RECEIVE_SMS)
-                == PackageManager.PERMISSION_GRANTED;
+        boolean smsGranted = areAllMessagePermissionsGranted();
 
         String smsStatus = smsGranted
                 ? getString(R.string.settings_permission_granted)
@@ -170,9 +175,7 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     private void requestCriticalPermissions() {
-        ActivityCompat.requestPermissions(this,
-                new String[]{Manifest.permission.RECEIVE_SMS},
-                REQUEST_PERMISSION_SMS);
+        ActivityCompat.requestPermissions(this, MESSAGE_PERMISSIONS, REQUEST_PERMISSION_SMS);
     }
 
     private void openSystemPermissions() {
@@ -186,12 +189,32 @@ public class SettingsActivity extends AppCompatActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == REQUEST_PERMISSION_SMS) {
             refreshPermissionSummary();
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            boolean granted = true;
+            if (grantResults.length == 0) {
+                granted = false;
+            } else {
+                for (int result : grantResults) {
+                    if (result != PackageManager.PERMISSION_GRANTED) {
+                        granted = false;
+                        break;
+                    }
+                }
+            }
+            if (granted) {
                 Toast.makeText(this, R.string.settings_permission_granted_toast, Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(this, R.string.settings_permission_denied_toast, Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+    private boolean areAllMessagePermissionsGranted() {
+        for (String permission : MESSAGE_PERMISSIONS) {
+            if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private void clearPasswordFields() {

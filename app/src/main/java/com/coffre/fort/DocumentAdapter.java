@@ -119,6 +119,8 @@ public class DocumentAdapter extends RecyclerView.Adapter<DocumentAdapter.Docume
             return R.color.category_media_color;
         } else if (category.equals(context.getString(R.string.category_sms))) {
             return R.color.category_sms_color;
+        } else if (category.equals(context.getString(R.string.category_messages))) {
+            return R.color.category_messages_color;
         }
         return R.color.category_other_color;
     }

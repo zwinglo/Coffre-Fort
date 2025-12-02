@@ -17,6 +17,7 @@
     <string name="category_media">Média</string>
     <string name="category_other">Autre</string>
     <string name="category_sms">SMS</string>
+    <string name="category_messages">Messages</string>
 
     <string name="document_title">Titre du document</string>
     <string name="document_content">Contenu</string>
@@ -99,8 +100,8 @@ Sécurité : %3$s</string>
     <string name="settings_tls_enabled">TLS activé</string>
     <string name="settings_tls_disabled">TLS désactivé</string>
     <string name="settings_permissions_title">Autorisations de l’application</string>
-    <string name="settings_permissions_description">Autorisez la réception des SMS pour l’automatisation et ouvrez les paramètres Android pour gérer les autres droits.</string>
-    <string name="settings_permission_summary">Autorisation SMS : %1$s</string>
+    <string name="settings_permissions_description">Autorisez la réception des SMS/MMS pour l’automatisation et ouvrez les paramètres Android pour gérer les autres droits.</string>
+    <string name="settings_permission_summary">Autorisations messages : %1$s</string>
     <string name="settings_permission_granted">accordée</string>
     <string name="settings_permission_missing">à valider</string>
     <string name="settings_request_permission">Demander à nouveau l’autorisation</string>
@@ -125,10 +126,15 @@ Sécurité : %3$s</string>
     <string name="email_test_missing_config">Complétez la configuration e-mail avant d’envoyer un test.</string>
     <string name="warning_incomplete_email_config">La configuration e-mail est incomplète. Vérifiez les paramètres.</string>
     <string name="ok">OK</string>
-    <string name="sms_permission_denied">La réception des SMS est désactivée : certains automatismes ne fonctionneront pas.</string>
+    <string name="sms_permission_denied">La réception des messages est désactivée : certains automatismes ne fonctionneront pas.</string>
     <string name="sms_document_title">SMS de %1$s</string>
     <string name="sms_document_title_unknown">expéditeur inconnu</string>
+    <string name="message_document_title">Message de %1$s</string>
     <string name="sms_document_content">Expéditeur : %1$s
+Date : %2$s
+
+%3$s</string>
+    <string name="message_document_content">Expéditeur : %1$s
 Date : %2$s
 
 %3$s</string>
@@ -137,4 +143,7 @@ Date : %2$s
 
 %3$s</string>
     <string name="sms_email_empty_body_placeholder">(aucun contenu textuel fourni)</string>
+    <string name="message_type_sms">SMS</string>
+    <string name="message_type_mms">MMS</string>
+    <string name="message_type_chat">Message</string>
 </resources>
