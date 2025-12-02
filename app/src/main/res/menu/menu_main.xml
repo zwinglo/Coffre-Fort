@@ -2,6 +2,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+        android:id="@+id/action_messages"
+        android:title="@string/menu_messages"
+        android:icon="@android:drawable/ic_dialog_email"
+        app:showAsAction="ifRoom" />
+    <item
         android:id="@+id/action_settings"
         android:title="@string/menu_settings"
         android:icon="@android:drawable/ic_menu_manage"

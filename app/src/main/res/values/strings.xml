@@ -146,4 +146,15 @@ Date : %2$s
     <string name="message_type_sms">SMS</string>
     <string name="message_type_mms">MMS</string>
     <string name="message_type_chat">Message</string>
+    <string name="menu_messages">Messages SMS/MMS</string>
+    <string name="messages_title">Sauvegarde SMS/MMS</string>
+    <string name="messages_empty">Aucun SMS ou MMS à afficher pour le moment.</string>
+    <string name="messages_sync_button">Synchroniser les messages</string>
+    <string name="messages_permission_denied">L’accès aux SMS/MMS est requis pour la sauvegarde locale.</string>
+    <string name="messages_rcs_notice">Solo se copian SMS y MMS. Los mensajes de chat (RCS) no pueden ser exportados por restricciones de Android.</string>
+    <string name="message_detail_title">Détail du message</string>
+    <string name="message_has_attachments">Pièces jointes enregistrées</string>
+    <string name="message_detail_no_attachments">Aucune pièce jointe pour ce MMS.</string>
+    <string name="attachment_info_format">%1$s · %2$s</string>
+    <string name="attachment_missing">Pièce jointe introuvable sur l’appareil</string>
 </resources>

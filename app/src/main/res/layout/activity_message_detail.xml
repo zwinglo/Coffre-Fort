@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/detailAddressTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/detailTypeTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/darker_gray"
+            android:paddingTop="4dp" />
+
+        <TextView
+            android:id="@+id/detailDateTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/darker_gray" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/document_content"
+            android:textStyle="bold"
+            android:paddingTop="12dp" />
+
+        <TextView
+            android:id="@+id/detailBodyTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="4dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/attachment_section_title"
+            android:textStyle="bold"
+            android:paddingTop="12dp" />
+
+        <TextView
+            android:id="@+id/detailAttachmentsEmptyTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/message_detail_no_attachments"
+            android:visibility="gone"
+            android:paddingTop="4dp" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/detailAttachmentsRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:nestedScrollingEnabled="false"
+            android:paddingTop="8dp" />
+
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

@@ -13,7 +13,7 @@ import java.util.List;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "coffre_fort.db";
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 3;
 
     private static final String TABLE_DOCUMENTS = "documents";
     private static final String COLUMN_ID = "id";
@@ -27,6 +27,24 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String TABLE_AUTH = "auth";
     private static final String COLUMN_PASSWORD = "password";
+
+    private static final String TABLE_MESSAGES = "messages";
+    private static final String COLUMN_MESSAGE_LOCAL_ID = "localId";
+    private static final String COLUMN_MESSAGE_PROVIDER_ID = "providerId";
+    private static final String COLUMN_MESSAGE_PROVIDER_TYPE = "providerType";
+    private static final String COLUMN_MESSAGE_ADDRESS = "address";
+    private static final String COLUMN_MESSAGE_DATE = "date";
+    private static final String COLUMN_MESSAGE_BODY = "body";
+    private static final String COLUMN_MESSAGE_BOX_TYPE = "boxType";
+    private static final String COLUMN_MESSAGE_HAS_ATTACHMENTS = "hasAttachments";
+
+    private static final String TABLE_ATTACHMENTS = "message_attachments";
+    private static final String COLUMN_ATTACHMENT_ID = "attachmentId";
+    private static final String COLUMN_ATTACHMENT_MESSAGE_ID = "messageLocalId";
+    private static final String COLUMN_ATTACHMENT_PROVIDER_PART_ID = "providerPartId";
+    private static final String COLUMN_ATTACHMENT_PATH = "filePath";
+    private static final String COLUMN_ATTACHMENT_CONTENT_TYPE = "contentType";
+    private static final String COLUMN_ATTACHMENT_SIZE = "sizeBytes";
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -48,6 +66,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         String createAuthTable = "CREATE TABLE " + TABLE_AUTH + " ("
                 + COLUMN_PASSWORD + " TEXT)";
         db.execSQL(createAuthTable);
+
+        createMessageTables(db);
     }
 
     @Override
@@ -57,6 +77,36 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             db.execSQL("ALTER TABLE " + TABLE_DOCUMENTS + " ADD COLUMN " + COLUMN_ATTACHMENT_MIME + " TEXT");
             db.execSQL("ALTER TABLE " + TABLE_DOCUMENTS + " ADD COLUMN " + COLUMN_ATTACHMENT_NAME + " TEXT");
         }
+        if (oldVersion < 3) {
+            createMessageTables(db);
+        }
+    }
+
+    private void createMessageTables(SQLiteDatabase db) {
+        String createMessagesTable = "CREATE TABLE " + TABLE_MESSAGES + " ("
+                + COLUMN_MESSAGE_LOCAL_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + COLUMN_MESSAGE_PROVIDER_ID + " INTEGER, "
+                + COLUMN_MESSAGE_PROVIDER_TYPE + " TEXT, "
+                + COLUMN_MESSAGE_ADDRESS + " TEXT, "
+                + COLUMN_MESSAGE_DATE + " INTEGER, "
+                + COLUMN_MESSAGE_BODY + " TEXT, "
+                + COLUMN_MESSAGE_BOX_TYPE + " INTEGER, "
+                + COLUMN_MESSAGE_HAS_ATTACHMENTS + " INTEGER DEFAULT 0, "
+                + "UNIQUE(" + COLUMN_MESSAGE_PROVIDER_ID + ", " + COLUMN_MESSAGE_PROVIDER_TYPE + ") ON CONFLICT IGNORE" +
+                ")";
+        db.execSQL(createMessagesTable);
+
+        String createAttachmentsTable = "CREATE TABLE " + TABLE_ATTACHMENTS + " ("
+                + COLUMN_ATTACHMENT_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + COLUMN_ATTACHMENT_MESSAGE_ID + " INTEGER, "
+                + COLUMN_ATTACHMENT_PROVIDER_PART_ID + " TEXT, "
+                + COLUMN_ATTACHMENT_PATH + " TEXT, "
+                + COLUMN_ATTACHMENT_CONTENT_TYPE + " TEXT, "
+                + COLUMN_ATTACHMENT_SIZE + " INTEGER, "
+                + "UNIQUE(" + COLUMN_ATTACHMENT_MESSAGE_ID + ", " + COLUMN_ATTACHMENT_PROVIDER_PART_ID + ") ON CONFLICT IGNORE, "
+                + "FOREIGN KEY(" + COLUMN_ATTACHMENT_MESSAGE_ID + ") REFERENCES " + TABLE_MESSAGES + "(" + COLUMN_MESSAGE_LOCAL_ID + ")" +
+                ")";
+        db.execSQL(createAttachmentsTable);
     }
 
     public void setPassword(String password) {
@@ -230,5 +280,154 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cursor.close();
         db.close();
         return count;
+    }
+
+    public long upsertMessage(VaultMessage message) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        long existingId = getExistingMessageId(db, message.getProviderId(), message.getProviderType());
+
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_MESSAGE_PROVIDER_ID, message.getProviderId());
+        values.put(COLUMN_MESSAGE_PROVIDER_TYPE, message.getProviderType());
+        values.put(COLUMN_MESSAGE_ADDRESS, message.getAddress());
+        values.put(COLUMN_MESSAGE_DATE, message.getDate());
+        values.put(COLUMN_MESSAGE_BODY, message.getBody());
+        values.put(COLUMN_MESSAGE_BOX_TYPE, message.getBoxType());
+        values.put(COLUMN_MESSAGE_HAS_ATTACHMENTS, message.hasAttachments() ? 1 : 0);
+
+        long resultId;
+        if (existingId != -1) {
+            boolean existingHasAttachments = existingMessageHasAttachments(db, existingId);
+            if (existingHasAttachments && !message.hasAttachments()) {
+                values.put(COLUMN_MESSAGE_HAS_ATTACHMENTS, 1);
+            }
+            db.update(TABLE_MESSAGES, values, COLUMN_MESSAGE_LOCAL_ID + "=?", new String[]{String.valueOf(existingId)});
+            resultId = existingId;
+        } else {
+            resultId = db.insert(TABLE_MESSAGES, null, values);
+        }
+        db.close();
+        return resultId;
+    }
+
+    public void updateMessageAttachmentFlag(long localId, boolean hasAttachments) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_MESSAGE_HAS_ATTACHMENTS, hasAttachments ? 1 : 0);
+        db.update(TABLE_MESSAGES, values, COLUMN_MESSAGE_LOCAL_ID + "=?", new String[]{String.valueOf(localId)});
+        db.close();
+    }
+
+    public VaultMessage getMessage(long localId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query(TABLE_MESSAGES, null, COLUMN_MESSAGE_LOCAL_ID + "=?",
+                new String[]{String.valueOf(localId)}, null, null, null);
+        VaultMessage message = null;
+        if (cursor.moveToFirst()) {
+            message = readMessageFromCursor(cursor);
+        }
+        cursor.close();
+        db.close();
+        return message;
+    }
+
+    public List<VaultMessage> getAllMessages() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query(TABLE_MESSAGES, null, null, null, null, null,
+                COLUMN_MESSAGE_DATE + " DESC");
+        List<VaultMessage> messages = new ArrayList<>();
+        if (cursor.moveToFirst()) {
+            do {
+                messages.add(readMessageFromCursor(cursor));
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+        return messages;
+    }
+
+    public long insertAttachment(MessageAttachment attachment) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_ATTACHMENT_MESSAGE_ID, attachment.getMessageLocalId());
+        values.put(COLUMN_ATTACHMENT_PROVIDER_PART_ID, attachment.getProviderPartId());
+        values.put(COLUMN_ATTACHMENT_PATH, attachment.getFilePath());
+        values.put(COLUMN_ATTACHMENT_CONTENT_TYPE, attachment.getContentType());
+        values.put(COLUMN_ATTACHMENT_SIZE, attachment.getSizeBytes());
+        long id = db.insert(TABLE_ATTACHMENTS, null, values);
+        db.close();
+        return id;
+    }
+
+    private boolean existingMessageHasAttachments(SQLiteDatabase db, long localId) {
+        Cursor cursor = db.query(TABLE_MESSAGES, new String[]{COLUMN_MESSAGE_HAS_ATTACHMENTS},
+                COLUMN_MESSAGE_LOCAL_ID + "=?", new String[]{String.valueOf(localId)}, null, null, null);
+        boolean hasAttachments = false;
+        if (cursor.moveToFirst()) {
+            hasAttachments = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_MESSAGE_HAS_ATTACHMENTS)) == 1;
+        }
+        cursor.close();
+        return hasAttachments;
+    }
+
+    public boolean attachmentExists(long messageLocalId, String providerPartId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query(TABLE_ATTACHMENTS, new String[]{COLUMN_ATTACHMENT_ID},
+                COLUMN_ATTACHMENT_MESSAGE_ID + "=? AND " + COLUMN_ATTACHMENT_PROVIDER_PART_ID + "=?",
+                new String[]{String.valueOf(messageLocalId), providerPartId}, null, null, null);
+        boolean exists = cursor.moveToFirst();
+        cursor.close();
+        db.close();
+        return exists;
+    }
+
+    public List<MessageAttachment> getAttachmentsForMessage(long messageLocalId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query(TABLE_ATTACHMENTS, null,
+                COLUMN_ATTACHMENT_MESSAGE_ID + "=?",
+                new String[]{String.valueOf(messageLocalId)}, null, null, null);
+        List<MessageAttachment> attachments = new ArrayList<>();
+        if (cursor.moveToFirst()) {
+            do {
+                attachments.add(readAttachmentFromCursor(cursor));
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+        return attachments;
+    }
+
+    private long getExistingMessageId(SQLiteDatabase db, long providerId, String providerType) {
+        Cursor cursor = db.query(TABLE_MESSAGES, new String[]{COLUMN_MESSAGE_LOCAL_ID},
+                COLUMN_MESSAGE_PROVIDER_ID + "=? AND " + COLUMN_MESSAGE_PROVIDER_TYPE + "=?",
+                new String[]{String.valueOf(providerId), providerType}, null, null, null);
+        long id = -1;
+        if (cursor.moveToFirst()) {
+            id = cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_MESSAGE_LOCAL_ID));
+        }
+        cursor.close();
+        return id;
+    }
+
+    private VaultMessage readMessageFromCursor(Cursor cursor) {
+        long localId = cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_MESSAGE_LOCAL_ID));
+        long providerId = cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_MESSAGE_PROVIDER_ID));
+        String providerType = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_MESSAGE_PROVIDER_TYPE));
+        String address = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_MESSAGE_ADDRESS));
+        long date = cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_MESSAGE_DATE));
+        String body = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_MESSAGE_BODY));
+        int boxType = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_MESSAGE_BOX_TYPE));
+        boolean hasAttachments = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_MESSAGE_HAS_ATTACHMENTS)) == 1;
+        return new VaultMessage(localId, providerId, providerType, address, date, body, boxType, hasAttachments);
+    }
+
+    private MessageAttachment readAttachmentFromCursor(Cursor cursor) {
+        long attachmentId = cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_ATTACHMENT_ID));
+        long messageId = cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_ATTACHMENT_MESSAGE_ID));
+        String providerPartId = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_ATTACHMENT_PROVIDER_PART_ID));
+        String filePath = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_ATTACHMENT_PATH));
+        String contentType = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_ATTACHMENT_CONTENT_TYPE));
+        long size = cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_ATTACHMENT_SIZE));
+        return new MessageAttachment(attachmentId, messageId, providerPartId, filePath, contentType, size);
     }
 }

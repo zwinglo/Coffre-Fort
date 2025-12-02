@@ -10,6 +10,8 @@ import android.provider.Telephony;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.coffre.fort.MessageSyncManager;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -66,6 +68,8 @@ public class MmsReceiver extends BroadcastReceiver {
             String subject = cursor.getString(cursor.getColumnIndexOrThrow(Telephony.Mms.SUBJECT));
             String sender = extractSender(context, mmsId);
             String body = extractTextParts(context, mmsId, subject);
+
+            new MessageSyncManager(context).synchronizeMessages();
 
             Document document = new Document();
             document.setTitle(context.getString(R.string.message_document_title, sender));

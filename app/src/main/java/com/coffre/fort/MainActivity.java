@@ -37,7 +37,8 @@ public class MainActivity extends AppCompatActivity implements DocumentAdapter.O
             Manifest.permission.RECEIVE_SMS,
             Manifest.permission.RECEIVE_MMS,
             Manifest.permission.RECEIVE_WAP_PUSH,
-            Manifest.permission.READ_SMS
+            Manifest.permission.READ_SMS,
+            Manifest.permission.READ_PHONE_STATE
     };
 
     private RecyclerView documentsRecyclerView;
@@ -136,7 +137,11 @@ public class MainActivity extends AppCompatActivity implements DocumentAdapter.O
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.action_settings) {
+        if (item.getItemId() == R.id.action_messages) {
+            Intent intent = new Intent(this, MessageListActivity.class);
+            startActivity(intent);
+            return true;
+        } else if (item.getItemId() == R.id.action_settings) {
             Intent intent = new Intent(this, SettingsActivity.class);
             startActivity(intent);
             return true;
