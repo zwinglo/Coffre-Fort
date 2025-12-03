@@ -157,7 +157,7 @@ public class AddDocumentActivity extends AppCompatActivity {
 
     private boolean requiresTextContent(String category) {
         return category.equals(getString(R.string.category_text))
-                || category.equals(getString(R.string.category_sms));
+                || CategoryUtils.isMessageCategory(this, category);
     }
 
     private void openAttachmentPicker() {
@@ -241,8 +241,7 @@ public class AddDocumentActivity extends AppCompatActivity {
         document.setAttachmentName(selectedAttachmentName);
 
         databaseHelper.addDocument(document);
-        if (category.equals(getString(R.string.category_messages))
-                || category.equals(getString(R.string.category_sms))) {
+        if (CategoryUtils.isMessageCategory(this, category)) {
             MessageEmailDispatcher.dispatch(this, document, title, MessageEmailDispatcher.MessageType.CHAT, content, document.getTimestamp());
         }
         Toast.makeText(this, R.string.document_saved, Toast.LENGTH_SHORT).show();
@@ -251,6 +250,7 @@ public class AddDocumentActivity extends AppCompatActivity {
 
     private String getCurrentCategory() {
         Object selectedItem = categorySpinner.getSelectedItem();
-        return selectedItem != null ? selectedItem.toString() : categories[0];
+        String current = selectedItem != null ? selectedItem.toString() : categories[0];
+        return CategoryUtils.normalizeCategory(this, current);
     }
 }

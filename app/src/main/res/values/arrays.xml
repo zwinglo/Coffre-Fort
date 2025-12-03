@@ -5,7 +5,6 @@
         <item>@string/category_images</item>
         <item>@string/category_media</item>
         <item>@string/category_other</item>
-        <item>@string/category_sms</item>
         <item>@string/category_messages</item>
     </string-array>
 </resources>

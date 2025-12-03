@@ -42,13 +42,44 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
+        <LinearLayout
+            android:id="@+id/actionButtonsContainer"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:orientation="horizontal"
+            android:gravity="center"
+            app:layout_constraintTop_toBottomOf="@id/dateTextView"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <Button
+                android:id="@+id/changeCategoryButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginEnd="8dp"
+                android:backgroundTint="@color/primary"
+                android:text="@string/change_category_button" />
+
+            <Button
+                android:id="@+id/emailButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="8dp"
+                android:backgroundTint="@color/primary"
+                android:text="@string/email_document_button" />
+
+        </LinearLayout>
+
         <View
             android:id="@+id/divider"
             android:layout_width="0dp"
             android:layout_height="1dp"
             android:layout_marginTop="16dp"
             android:background="@android:color/darker_gray"
-            app:layout_constraintTop_toBottomOf="@id/dateTextView"
+            app:layout_constraintTop_toBottomOf="@id/actionButtonsContainer"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
