@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -21,6 +22,8 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -148,7 +151,8 @@ public class MessageListActivity extends AppCompatActivity implements MessageAda
         }
 
         String body = buildEmailBody(selectedMessages);
-        EmailSender.sendEmail(this, subject, body);
+        List<EmailSender.EmailAttachment> attachments = collectAttachments(selectedMessages);
+        EmailSender.sendEmail(this, subject, body, attachments);
         adapter.clearSelection();
     }
 
@@ -167,6 +171,24 @@ public class MessageListActivity extends AppCompatActivity implements MessageAda
             }
         }
         return builder.toString();
+    }
+
+    private List<EmailSender.EmailAttachment> collectAttachments(List<VaultMessage> messages) {
+        List<EmailSender.EmailAttachment> attachments = new ArrayList<>();
+        for (VaultMessage message : messages) {
+            List<MessageAttachment> messageAttachments = databaseHelper.getAttachmentsForMessage(message.getLocalId());
+            for (MessageAttachment attachment : messageAttachments) {
+                File file = new File(attachment.getFilePath());
+                if (!file.exists()) {
+                    continue;
+                }
+                String mimeType = TextUtils.isEmpty(attachment.getContentType())
+                        ? "application/octet-stream"
+                        : attachment.getContentType();
+                attachments.add(new EmailSender.EmailAttachment(Uri.fromFile(file), mimeType, file.getName()));
+            }
+        }
+        return attachments;
     }
 
     private void synchronizeMessages() {
