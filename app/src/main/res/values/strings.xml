@@ -50,6 +50,9 @@
     <string name="unknown_mime_type">type inconnu</string>
     <string name="document_list_timestamp">Mis à jour le %1$s</string>
     <string name="attachment_summary_short">Pièce jointe : %1$s</string>
+    <string name="attachment_extension_format">Extension : %1$s</string>
+    <string name="attachment_size_format">Taille : %1$s</string>
+    <string name="attachment_size_unknown">Taille : inconnue</string>
     <string name="no_preview_available">Aucun aperçu disponible</string>
     <string name="document_detail_timestamp">Ajouté le %1$s</string>
     <string name="attachment_name_format">%1$s (%2$s)</string>
@@ -150,6 +153,11 @@ Date : %2$s
     <string name="messages_title">Sauvegarde SMS/MMS</string>
     <string name="messages_empty">Aucun SMS ou MMS à afficher pour le moment.</string>
     <string name="messages_sync_button">Synchroniser les messages</string>
+    <string name="messages_email_button">Envoyer par e-mail</string>
+    <string name="messages_email_none_selected">Sélectionnez au moins un message à envoyer.</string>
+    <string name="messages_email_missing_config">Configurez l’e-mail dans les paramètres avant d’envoyer.</string>
+    <string name="messages_email_subject_single">Transfert du message du %1$s</string>
+    <string name="messages_email_subject_multiple">Transfert de %1$d messages</string>
     <string name="messages_permission_denied">L’accès aux SMS/MMS est requis pour la sauvegarde locale.</string>
     <string name="messages_rcs_notice">Solo se copian SMS y MMS. Los mensajes de chat (RCS) no pueden ser exportados por restricciones de Android.</string>
     <string name="message_detail_title">Détail du message</string>

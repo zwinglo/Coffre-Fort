@@ -118,8 +118,24 @@
 
             </LinearLayout>
 
+                <TextView
+                    android:id="@+id/attachmentNameTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@android:color/darker_gray"
+                    android:textSize="14sp"
+                    android:visibility="gone" />
+
             <TextView
-                android:id="@+id/attachmentNameTextView"
+                android:id="@+id/attachmentExtensionTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/darker_gray"
+                android:textSize="14sp"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/attachmentSizeTextView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@android:color/darker_gray"

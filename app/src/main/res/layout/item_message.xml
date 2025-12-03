@@ -12,12 +12,26 @@
         android:orientation="vertical"
         android:padding="12dp">
 
-        <TextView
-            android:id="@+id/messageAddressTextView"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textStyle="bold"
-            android:textSize="16sp" />
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/messageAddressTextView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textStyle="bold"
+                android:textSize="16sp" />
+
+            <CheckBox
+                android:id="@+id/messageSelectCheckBox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/messages_email_button" />
+        </LinearLayout>
 
         <TextView
             android:id="@+id/messageTypeTextView"

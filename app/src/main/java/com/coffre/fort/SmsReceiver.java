@@ -72,10 +72,12 @@ public class SmsReceiver extends BroadcastReceiver {
 
         new MessageSyncManager(context).synchronizeMessages();
 
+        String rawBody = messageBody.toString();
+
         Document document = new Document();
         document.setTitle(context.getString(R.string.message_document_title, sender));
         document.setCategory(context.getString(R.string.category_messages));
-        document.setContent(MessageFormatter.buildDocumentContent(context, sender, messageTimestamp, messageBody.toString()));
+        document.setContent(MessageFormatter.buildDocumentContent(context, sender, messageTimestamp, rawBody));
         document.setTimestamp(messageTimestamp == 0L ? System.currentTimeMillis() : messageTimestamp);
 
         DatabaseHelper databaseHelper = new DatabaseHelper(context);
@@ -83,7 +85,7 @@ public class SmsReceiver extends BroadcastReceiver {
         databaseHelper.close();
         document.setId((int) documentId);
 
-        MessageEmailDispatcher.dispatch(context, document, sender, MessageEmailDispatcher.MessageType.SMS);
+        MessageEmailDispatcher.dispatch(context, document, sender, MessageEmailDispatcher.MessageType.SMS, rawBody, document.getTimestamp());
 
         Intent refreshIntent = new Intent(ACTION_SMS_SAVED);
         refreshIntent.setPackage(context.getPackageName());

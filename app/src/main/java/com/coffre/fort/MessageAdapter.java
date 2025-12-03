@@ -5,13 +5,16 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageViewHolder> {
 
@@ -19,9 +22,15 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         void onMessageClick(VaultMessage message);
     }
 
+    public interface SelectionChangeListener {
+        void onSelectionChanged(int selectedCount);
+    }
+
     private final Context context;
     private final OnMessageClickListener listener;
     private List<VaultMessage> messages = new ArrayList<>();
+    private final Set<Long> selectedMessageIds = new HashSet<>();
+    private SelectionChangeListener selectionChangeListener;
 
     public MessageAdapter(Context context, OnMessageClickListener listener) {
         this.context = context;
@@ -30,7 +39,29 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
 
     public void setMessages(List<VaultMessage> messages) {
         this.messages = messages == null ? new ArrayList<>() : messages;
+        selectedMessageIds.clear();
+        notifySelectionChanged();
         notifyDataSetChanged();
+    }
+
+    public void setSelectionChangeListener(SelectionChangeListener selectionChangeListener) {
+        this.selectionChangeListener = selectionChangeListener;
+    }
+
+    public List<VaultMessage> getSelectedMessages() {
+        List<VaultMessage> selected = new ArrayList<>();
+        for (VaultMessage message : messages) {
+            if (selectedMessageIds.contains(message.getLocalId())) {
+                selected.add(message);
+            }
+        }
+        return selected;
+    }
+
+    public void clearSelection() {
+        selectedMessageIds.clear();
+        notifyDataSetChanged();
+        notifySelectionChanged();
     }
 
     @NonNull
@@ -57,6 +88,18 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
 
         holder.attachmentTextView.setVisibility(message.hasAttachments() ? View.VISIBLE : View.GONE);
 
+        holder.selectCheckBox.setOnCheckedChangeListener(null);
+        boolean isSelected = selectedMessageIds.contains(message.getLocalId());
+        holder.selectCheckBox.setChecked(isSelected);
+        holder.selectCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                selectedMessageIds.add(message.getLocalId());
+            } else {
+                selectedMessageIds.remove(message.getLocalId());
+            }
+            notifySelectionChanged();
+        });
+
         holder.itemView.setOnClickListener(v -> listener.onMessageClick(message));
     }
 
@@ -78,6 +121,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         final TextView bodyTextView;
         final TextView typeTextView;
         final TextView attachmentTextView;
+        final CheckBox selectCheckBox;
 
         MessageViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -86,6 +130,13 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
             bodyTextView = itemView.findViewById(R.id.messageBodyTextView);
             typeTextView = itemView.findViewById(R.id.messageTypeTextView);
             attachmentTextView = itemView.findViewById(R.id.messageAttachmentTextView);
+            selectCheckBox = itemView.findViewById(R.id.messageSelectCheckBox);
+        }
+    }
+
+    private void notifySelectionChanged() {
+        if (selectionChangeListener != null) {
+            selectionChangeListener.onSelectionChanged(selectedMessageIds.size());
         }
     }
 }
