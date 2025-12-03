@@ -1,5 +1,6 @@
 package com.coffre.fort;
 
+import android.content.ContentResolver;
 import android.content.Context;
 import android.net.Uri;
 import android.text.TextUtils;
@@ -7,6 +8,10 @@ import android.util.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
@@ -33,10 +38,35 @@ public final class EmailSender {
     }
 
     public static void sendEmail(Context context, String subject, String body) {
-        sendEmail(context, subject, body, null);
+        sendEmail(context, subject, body, (List<EmailAttachment>) null);
     }
 
     public static void sendEmail(Context context, String subject, String body, Document attachmentSource) {
+        List<EmailAttachment> attachments = null;
+        EmailConfigManager configManager = new EmailConfigManager(context);
+        if (!configManager.isConfigured()) {
+            Log.w(TAG, "Email configuration missing; skipping email send");
+            return;
+        }
+
+        if (attachmentSource != null && attachmentSource.hasAttachment() && attachmentSource.getAttachmentUri() != null) {
+            String mimeType = TextUtils.isEmpty(attachmentSource.getAttachmentMimeType())
+                    ? "application/octet-stream"
+                    : attachmentSource.getAttachmentMimeType();
+            String fileName = TextUtils.isEmpty(attachmentSource.getAttachmentName())
+                    ? "piece_jointe"
+                    : attachmentSource.getAttachmentName();
+            attachments = Collections.singletonList(new EmailAttachment(
+                    Uri.parse(attachmentSource.getAttachmentUri()),
+                    mimeType,
+                    fileName
+            ));
+        }
+
+        sendEmail(context, subject, body, attachments);
+    }
+
+    public static void sendEmail(Context context, String subject, String body, List<EmailAttachment> attachments) {
         EmailConfigManager configManager = new EmailConfigManager(context);
         if (!configManager.isConfigured()) {
             Log.w(TAG, "Email configuration missing; skipping email send");
@@ -76,18 +106,23 @@ public final class EmailSender {
                         InternetAddress.parse(configManager.getRecipient()));
                 message.setSubject(safeSubject);
 
-                if (attachmentSource != null && attachmentSource.hasAttachment()) {
+                MimeMultipart multipart = new MimeMultipart();
+                boolean hasAttachments = attachments != null && !attachments.isEmpty();
+
+                if (hasAttachments) {
                     MimeBodyPart textPart = new MimeBodyPart();
                     textPart.setText(safeBody);
-
-                    MimeMultipart multipart = new MimeMultipart();
                     multipart.addBodyPart(textPart);
 
-                    MimeBodyPart attachmentPart = buildAttachmentPart(context, attachmentSource);
-                    if (attachmentPart != null) {
-                        multipart.addBodyPart(attachmentPart);
+                    for (EmailAttachment attachment : attachments) {
+                        MimeBodyPart attachmentPart = buildAttachmentPart(context, attachment);
+                        if (attachmentPart != null) {
+                            multipart.addBodyPart(attachmentPart);
+                        }
                     }
+                }
 
+                if (multipart.getCount() > 0) {
                     message.setContent(multipart);
                 } else {
                     message.setText(safeBody);
@@ -100,33 +135,77 @@ public final class EmailSender {
         });
     }
 
-    private static MimeBodyPart buildAttachmentPart(Context context, Document attachmentSource) throws Exception {
-        if (!attachmentSource.hasAttachment() || attachmentSource.getAttachmentUri() == null) {
+    private static MimeBodyPart buildAttachmentPart(Context context, EmailAttachment attachment) throws Exception {
+        if (attachment == null || attachment.getUri() == null) {
             return null;
         }
 
-        Uri uri = Uri.parse(attachmentSource.getAttachmentUri());
-        try (InputStream inputStream = context.getContentResolver().openInputStream(uri)) {
+        Uri uri = attachment.getUri();
+        InputStream inputStream = null;
+        try {
+            if (ContentResolver.SCHEME_CONTENT.equals(uri.getScheme())) {
+                inputStream = context.getContentResolver().openInputStream(uri);
+            } else {
+                File file = ContentResolver.SCHEME_FILE.equals(uri.getScheme())
+                        ? new File(uri.getPath())
+                        : new File(uri.toString());
+                if (file.exists()) {
+                    inputStream = new FileInputStream(file);
+                }
+            }
+
             if (inputStream == null) {
                 Log.w(TAG, "Unable to open attachment stream for URI: " + uri);
                 return null;
             }
 
-            String mimeType = TextUtils.isEmpty(attachmentSource.getAttachmentMimeType())
+            String mimeType = TextUtils.isEmpty(attachment.getMimeType())
                     ? "application/octet-stream"
-                    : attachmentSource.getAttachmentMimeType();
+                    : attachment.getMimeType();
             DataSource dataSource = new ByteArrayDataSource(inputStream, mimeType);
 
             MimeBodyPart attachmentPart = new MimeBodyPart();
             attachmentPart.setDataHandler(new DataHandler(dataSource));
-            String fileName = TextUtils.isEmpty(attachmentSource.getAttachmentName())
+            String fileName = TextUtils.isEmpty(attachment.getDisplayName())
                     ? "piece_jointe"
-                    : attachmentSource.getAttachmentName();
+                    : attachment.getDisplayName();
             attachmentPart.setFileName(fileName);
             return attachmentPart;
         } catch (IOException e) {
             Log.e(TAG, "Failed to read attachment from URI: " + uri, e);
             return null;
+        } finally {
+            if (inputStream != null) {
+                try {
+                    inputStream.close();
+                } catch (IOException ignored) {
+                    // Ignored
+                }
+            }
+        }
+    }
+
+    public static class EmailAttachment {
+        private final Uri uri;
+        private final String mimeType;
+        private final String displayName;
+
+        public EmailAttachment(Uri uri, String mimeType, String displayName) {
+            this.uri = uri;
+            this.mimeType = mimeType;
+            this.displayName = displayName;
+        }
+
+        public Uri getUri() {
+            return uri;
+        }
+
+        public String getMimeType() {
+            return mimeType;
+        }
+
+        public String getDisplayName() {
+            return displayName;
         }
     }
 }
