@@ -243,7 +243,7 @@ public class AddDocumentActivity extends AppCompatActivity {
         databaseHelper.addDocument(document);
         if (category.equals(getString(R.string.category_messages))
                 || category.equals(getString(R.string.category_sms))) {
-            MessageEmailDispatcher.dispatch(this, document, title, MessageEmailDispatcher.MessageType.CHAT);
+            MessageEmailDispatcher.dispatch(this, document, title, MessageEmailDispatcher.MessageType.CHAT, content, document.getTimestamp());
         }
         Toast.makeText(this, R.string.document_saved, Toast.LENGTH_SHORT).show();
         finish();

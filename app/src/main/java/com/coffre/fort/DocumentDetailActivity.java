@@ -29,6 +29,8 @@ public class DocumentDetailActivity extends AppCompatActivity {
     private TextView contentTextView;
     private TextView dateTextView;
     private TextView attachmentNameTextView;
+    private TextView attachmentExtensionTextView;
+    private TextView attachmentSizeTextView;
     private TextView audioStatusTextView;
     private TextView noPreviewTextView;
     private ImageView attachmentImageView;
@@ -59,6 +61,8 @@ public class DocumentDetailActivity extends AppCompatActivity {
         contentTextView = findViewById(R.id.contentTextView);
         dateTextView = findViewById(R.id.dateTextView);
         attachmentNameTextView = findViewById(R.id.attachmentNameTextView);
+        attachmentExtensionTextView = findViewById(R.id.attachmentExtensionTextView);
+        attachmentSizeTextView = findViewById(R.id.attachmentSizeTextView);
         audioStatusTextView = findViewById(R.id.audioStatusTextView);
         noPreviewTextView = findViewById(R.id.noPreviewTextView);
         attachmentContainer = findViewById(R.id.attachmentContainer);
@@ -138,6 +142,8 @@ public class DocumentDetailActivity extends AppCompatActivity {
         audioContainer.setVisibility(View.GONE);
         openAttachmentButton.setVisibility(View.GONE);
         noPreviewTextView.setVisibility(View.GONE);
+        attachmentExtensionTextView.setVisibility(View.GONE);
+        attachmentSizeTextView.setVisibility(View.GONE);
         resetAudioUi();
 
         String attachmentName = document.getAttachmentName();
@@ -153,6 +159,22 @@ public class DocumentDetailActivity extends AppCompatActivity {
                 ? getString(R.string.unknown_mime_type)
                 : attachmentMimeType;
         attachmentNameTextView.setText(getString(R.string.attachment_name_format, attachmentName, displayMimeType));
+
+        String extension = AttachmentUtils.getFileExtension(attachmentName, attachmentMimeType);
+        if (!TextUtils.isEmpty(extension)) {
+            attachmentExtensionTextView.setVisibility(View.VISIBLE);
+            attachmentExtensionTextView.setText(getString(R.string.attachment_extension_format, extension));
+        }
+
+        long fileSize = AttachmentUtils.getFileSize(this, attachmentUri);
+        if (fileSize >= 0) {
+            attachmentSizeTextView.setVisibility(View.VISIBLE);
+            attachmentSizeTextView.setText(
+                    getString(R.string.attachment_size_format, AttachmentUtils.formatFileSize(fileSize)));
+        } else {
+            attachmentSizeTextView.setVisibility(View.VISIBLE);
+            attachmentSizeTextView.setText(R.string.attachment_size_unknown);
+        }
 
         if (attachmentMimeType != null) {
             if (attachmentMimeType.startsWith("image/")) {
