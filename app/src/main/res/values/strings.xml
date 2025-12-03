@@ -17,7 +17,7 @@
     <string name="category_media">Média</string>
     <string name="category_other">Autre</string>
     <string name="category_sms">SMS</string>
-    <string name="category_messages">Messages</string>
+    <string name="category_messages">Messages SMS/MMS</string>
 
     <string name="document_title">Titre du document</string>
     <string name="document_content">Contenu</string>
@@ -53,6 +53,20 @@
     <string name="attachment_extension_format">Extension : %1$s</string>
     <string name="attachment_size_format">Taille : %1$s</string>
     <string name="attachment_size_unknown">Taille : inconnue</string>
+    <string name="change_category_button">Changer de catégorie</string>
+    <string name="change_category_dialog_title">Sélectionnez une nouvelle catégorie</string>
+    <string name="change_category_success">Catégorie mise à jour.</string>
+    <string name="change_category_error">Impossible de mettre à jour la catégorie.</string>
+    <string name="email_document_button">Envoyer par e-mail</string>
+    <string name="email_document_subject">Document : %1$s</string>
+    <string name="email_document_body">Titre : %1$s
+Catégorie : %2$s
+Date : %3$s
+
+%4$s</string>
+    <string name="email_document_body_placeholder">Aucune description fournie. Consultez la pièce jointe si présente.</string>
+    <string name="document_email_missing_config">Configurez l’e-mail dans les paramètres avant d’envoyer.</string>
+    <string name="document_email_started">Envoi de l’e-mail en cours…</string>
     <string name="no_preview_available">Aucun aperçu disponible</string>
     <string name="document_detail_timestamp">Ajouté le %1$s</string>
     <string name="attachment_name_format">%1$s (%2$s)</string>

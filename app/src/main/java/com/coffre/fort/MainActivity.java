@@ -82,7 +82,7 @@ public class MainActivity extends AppCompatActivity implements DocumentAdapter.O
         categorySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                selectedCategory = position == 0 ? null : categories[position];
+                selectedCategory = position == 0 ? null : CategoryUtils.normalizeCategory(MainActivity.this, categories[position]);
                 loadDocuments();
             }
 
@@ -153,6 +153,9 @@ public class MainActivity extends AppCompatActivity implements DocumentAdapter.O
         List<Document> documents;
         if (selectedCategory == null) {
             documents = databaseHelper.getAllDocuments();
+        } else if (CategoryUtils.isMessageCategory(this, selectedCategory)) {
+            documents = databaseHelper.getDocumentsByCategories(
+                    CategoryUtils.getMessageCategoriesForQuery(this));
         } else {
             documents = databaseHelper.getDocumentsByCategory(selectedCategory);
         }
