@@ -159,7 +159,7 @@ Date : %2$s
     <string name="messages_email_subject_single">Transfert du message du %1$s</string>
     <string name="messages_email_subject_multiple">Transfert de %1$d messages</string>
     <string name="messages_permission_denied">L’accès aux SMS/MMS est requis pour la sauvegarde locale.</string>
-    <string name="messages_rcs_notice">Solo se copian SMS y MMS. Los mensajes de chat (RCS) no pueden ser exportados por restricciones de Android.</string>
+    <string name="messages_rcs_notice">Seuls les SMS et les MMS peuvent être copiés. Les messages de chat (RCS) ne peuvent pas être exportés en raison des restrictions d’Android.</string>
     <string name="message_detail_title">Détail du message</string>
     <string name="message_has_attachments">Pièces jointes enregistrées</string>
     <string name="message_detail_no_attachments">Aucune pièce jointe pour ce MMS.</string>
