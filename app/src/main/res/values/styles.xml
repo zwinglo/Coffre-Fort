@@ -16,4 +16,35 @@
         <!-- Opcional: status bar consistente con el primaryDark -->
         <item name="android:statusBarColor">@color/primaryDark</item>
     </style>
+
+    <style name="Widget.Coffre.Button.Base" parent="Widget.MaterialComponents.Button">
+        <item name="cornerRadius">14dp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="Widget.Coffre.Button.Primary" parent="Widget.Coffre.Button.Base">
+        <item name="backgroundTint">@color/primary</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="rippleColor">@color/primaryDark</item>
+    </style>
+
+    <style name="Widget.Coffre.Button.Accent" parent="Widget.Coffre.Button.Base">
+        <item name="backgroundTint">@color/accent</item>
+        <item name="android:textColor">@color/textPrimary</item>
+        <item name="rippleColor">@color/primary</item>
+    </style>
+
+    <style name="Widget.Coffre.Button.Neutral" parent="Widget.Coffre.Button.Base">
+        <item name="backgroundTint">@color/buttonNeutral</item>
+        <item name="android:textColor">@color/buttonNeutralText</item>
+        <item name="rippleColor">@color/textSecondary</item>
+    </style>
+
+    <style name="Widget.Coffre.Button.Danger" parent="Widget.Coffre.Button.Base">
+        <item name="backgroundTint">@color/danger</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="rippleColor">@color/primaryDark</item>
+    </style>
 </resources>

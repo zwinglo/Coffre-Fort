@@ -53,22 +53,22 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent">
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/changeCategoryButton"
+                style="@style/Widget.Coffre.Button.Primary"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_marginEnd="8dp"
-                android:backgroundTint="@color/primary"
                 android:text="@string/change_category_button" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/emailButton"
+                style="@style/Widget.Coffre.Button.Accent"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_marginStart="8dp"
-                android:backgroundTint="@color/primary"
                 android:text="@string/email_document_button" />
 
         </LinearLayout>
@@ -140,12 +140,12 @@
                     android:textColor="@android:color/darker_gray"
                     android:textSize="14sp" />
 
-                <Button
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/audioToggleButton"
+                    style="@style/Widget.Coffre.Button.Primary"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/play_audio"
-                    android:backgroundTint="@color/primary" />
+                    android:text="@string/play_audio" />
 
             </LinearLayout>
 
@@ -173,12 +173,12 @@
                 android:textSize="14sp"
                 android:visibility="gone" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/openAttachmentButton"
+                style="@style/Widget.Coffre.Button.Primary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
-                android:backgroundTint="@color/primary"
                 android:text="@string/open_attachment"
                 android:visibility="gone" />
 
@@ -195,13 +195,13 @@
 
         </LinearLayout>
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/deleteButton"
+            style="@style/Widget.Coffre.Button.Danger"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="@string/delete_button"
             android:layout_marginTop="32dp"
-            android:backgroundTint="#F44336"
             app:layout_constraintTop_toBottomOf="@id/attachmentContainer"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
