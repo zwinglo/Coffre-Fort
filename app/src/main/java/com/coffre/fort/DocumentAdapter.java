@@ -82,7 +82,7 @@ public class DocumentAdapter extends RecyclerView.Adapter<DocumentAdapter.Docume
             Context context = itemView.getContext();
             titleTextView.setText(document.getTitle());
 
-            String category = document.getCategory();
+            String category = CategoryUtils.normalizeCategory(context, document.getCategory());
             categoryTextView.setText(category);
 
             int colorRes = getColorForCategory(context, category);
@@ -117,9 +117,7 @@ public class DocumentAdapter extends RecyclerView.Adapter<DocumentAdapter.Docume
             return R.color.category_images_color;
         } else if (category.equals(context.getString(R.string.category_media))) {
             return R.color.category_media_color;
-        } else if (category.equals(context.getString(R.string.category_sms))) {
-            return R.color.category_sms_color;
-        } else if (category.equals(context.getString(R.string.category_messages))) {
+        } else if (CategoryUtils.isMessageCategory(context, category)) {
             return R.color.category_messages_color;
         }
         return R.color.category_other_color;

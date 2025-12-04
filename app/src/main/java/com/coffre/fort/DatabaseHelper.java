@@ -5,10 +5,12 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.text.TextUtils;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
@@ -184,20 +186,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.query(TABLE_DOCUMENTS, null, null, null, null, null,
                 COLUMN_TIMESTAMP + " DESC");
-        
+
         if (cursor.moveToFirst()) {
             do {
-                Document document = new Document(
-                    cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_ID)),
-                    cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_TITLE)),
-                    cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_CONTENT)),
-                    cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_CATEGORY)),
-                    cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_TIMESTAMP)),
-                    cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_ATTACHMENT_URI)),
-                    cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_ATTACHMENT_MIME)),
-                    cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_ATTACHMENT_NAME))
-                );
-                documents.add(document);
+                documents.add(readDocumentFromCursor(cursor));
             } while (cursor.moveToNext());
         }
         cursor.close();
@@ -214,17 +206,30 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         
         if (cursor.moveToFirst()) {
             do {
-                Document document = new Document(
-                    cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_ID)),
-                    cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_TITLE)),
-                    cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_CONTENT)),
-                    cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_CATEGORY)),
-                    cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_TIMESTAMP)),
-                    cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_ATTACHMENT_URI)),
-                    cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_ATTACHMENT_MIME)),
-                    cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_ATTACHMENT_NAME))
-                );
-                documents.add(document);
+                documents.add(readDocumentFromCursor(cursor));
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+        return documents;
+    }
+
+    public List<Document> getDocumentsByCategories(List<String> categories) {
+        List<Document> documents = new ArrayList<>();
+        if (categories == null || categories.isEmpty()) {
+            return documents;
+        }
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        String placeholders = TextUtils.join(",", Collections.nCopies(categories.size(), "?"));
+        Cursor cursor = db.query(TABLE_DOCUMENTS, null,
+                COLUMN_CATEGORY + " IN (" + placeholders + ")",
+                categories.toArray(new String[0]),
+                null, null, COLUMN_TIMESTAMP + " DESC");
+
+        if (cursor.moveToFirst()) {
+            do {
+                documents.add(readDocumentFromCursor(cursor));
             } while (cursor.moveToNext());
         }
         cursor.close();
@@ -240,20 +245,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         
         Document document = null;
         if (cursor.moveToFirst()) {
-            document = new Document(
-                cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_ID)),
-                cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_TITLE)),
-                cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_CONTENT)),
-                cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_CATEGORY)),
-                cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_TIMESTAMP)),
-                cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_ATTACHMENT_URI)),
-                cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_ATTACHMENT_MIME)),
-                cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_ATTACHMENT_NAME))
-            );
+            document = readDocumentFromCursor(cursor);
         }
         cursor.close();
         db.close();
         return document;
+    }
+
+    public boolean updateDocumentCategory(int id, String newCategory) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_CATEGORY, newCategory);
+        int rowsUpdated = db.update(TABLE_DOCUMENTS, values, COLUMN_ID + "=?", new String[]{String.valueOf(id)});
+        db.close();
+        return rowsUpdated > 0;
     }
 
     public void deleteDocument(int id) {
@@ -280,6 +285,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cursor.close();
         db.close();
         return count;
+    }
+
+    private Document readDocumentFromCursor(Cursor cursor) {
+        return new Document(
+            cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_ID)),
+            cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_TITLE)),
+            cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_CONTENT)),
+            cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_CATEGORY)),
+            cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_TIMESTAMP)),
+            cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_ATTACHMENT_URI)),
+            cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_ATTACHMENT_MIME)),
+            cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_ATTACHMENT_NAME))
+        );
     }
 
     public long upsertMessage(VaultMessage message) {

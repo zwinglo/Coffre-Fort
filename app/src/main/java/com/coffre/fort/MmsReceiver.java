@@ -89,7 +89,7 @@ public class MmsReceiver extends BroadcastReceiver {
             databaseHelper.close();
             document.setId((int) documentId);
 
-            MessageEmailDispatcher.dispatch(context, document, sender, MessageEmailDispatcher.MessageType.MMS);
+            MessageEmailDispatcher.dispatch(context, document, sender, MessageEmailDispatcher.MessageType.MMS, body, timestamp);
 
             Intent refreshIntent = new Intent(SmsReceiver.ACTION_SMS_SAVED);
             refreshIntent.setPackage(context.getPackageName());

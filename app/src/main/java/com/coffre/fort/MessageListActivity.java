@@ -6,12 +6,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,6 +22,8 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -32,6 +36,7 @@ public class MessageListActivity extends AppCompatActivity implements MessageAda
     private TextView emptyTextView;
     private View progressBar;
     private Button syncButton;
+    private Button emailButton;
 
     private DatabaseHelper databaseHelper;
     private MessageAdapter adapter;
@@ -52,11 +57,14 @@ public class MessageListActivity extends AppCompatActivity implements MessageAda
         emptyTextView = findViewById(R.id.messagesEmptyTextView);
         progressBar = findViewById(R.id.messagesProgressBar);
         syncButton = findViewById(R.id.messagesSyncButton);
+        emailButton = findViewById(R.id.messagesEmailButton);
 
         messagesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         messagesRecyclerView.setAdapter(adapter);
+        adapter.setSelectionChangeListener(this::updateEmailButtonState);
 
         syncButton.setOnClickListener(v -> synchronizeMessages());
+        emailButton.setOnClickListener(v -> sendSelectedMessagesByEmail());
 
         messagesUpdatedReceiver = new BroadcastReceiver() {
             @Override
@@ -112,6 +120,75 @@ public class MessageListActivity extends AppCompatActivity implements MessageAda
         boolean hasMessages = messages != null && !messages.isEmpty();
         emptyTextView.setVisibility(hasMessages ? View.GONE : View.VISIBLE);
         messagesRecyclerView.setVisibility(hasMessages ? View.VISIBLE : View.GONE);
+    }
+
+    private void updateEmailButtonState(int selectedCount) {
+        if (emailButton != null) {
+            emailButton.setEnabled(selectedCount > 0);
+        }
+    }
+
+    private void sendSelectedMessagesByEmail() {
+        List<VaultMessage> selectedMessages = adapter.getSelectedMessages();
+        if (selectedMessages.isEmpty()) {
+            Toast.makeText(this, R.string.messages_email_none_selected, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        EmailConfigManager configManager = new EmailConfigManager(this);
+        if (!configManager.isConfigured()) {
+            Toast.makeText(this, R.string.messages_email_missing_config, Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        String subject;
+        if (selectedMessages.size() == 1) {
+            VaultMessage message = selectedMessages.get(0);
+            subject = getString(R.string.messages_email_subject_single,
+                    MessageFormatter.formatTimestamp(message.getDate()));
+        } else {
+            subject = getString(R.string.messages_email_subject_multiple, selectedMessages.size());
+        }
+
+        String body = buildEmailBody(selectedMessages);
+        List<EmailSender.EmailAttachment> attachments = collectAttachments(selectedMessages);
+        EmailSender.sendEmail(this, subject, body, attachments);
+        adapter.clearSelection();
+    }
+
+    private String buildEmailBody(List<VaultMessage> messages) {
+        StringBuilder builder = new StringBuilder();
+        String separator = "\n\n------------------------------\n\n";
+        for (int i = 0; i < messages.size(); i++) {
+            VaultMessage message = messages.get(i);
+            String sender = TextUtils.isEmpty(message.getAddress())
+                    ? getString(R.string.sms_document_title_unknown)
+                    : message.getAddress();
+            String body = MessageFormatter.buildEmailBody(this, sender, message.getDate(), message.getBody());
+            builder.append(body);
+            if (i < messages.size() - 1) {
+                builder.append(separator);
+            }
+        }
+        return builder.toString();
+    }
+
+    private List<EmailSender.EmailAttachment> collectAttachments(List<VaultMessage> messages) {
+        List<EmailSender.EmailAttachment> attachments = new ArrayList<>();
+        for (VaultMessage message : messages) {
+            List<MessageAttachment> messageAttachments = databaseHelper.getAttachmentsForMessage(message.getLocalId());
+            for (MessageAttachment attachment : messageAttachments) {
+                File file = new File(attachment.getFilePath());
+                if (!file.exists()) {
+                    continue;
+                }
+                String mimeType = TextUtils.isEmpty(attachment.getContentType())
+                        ? "application/octet-stream"
+                        : attachment.getContentType();
+                attachments.add(new EmailSender.EmailAttachment(Uri.fromFile(file), mimeType, file.getName()));
+            }
+        }
+        return attachments;
     }
 
     private void synchronizeMessages() {
