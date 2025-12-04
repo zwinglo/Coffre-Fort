@@ -101,12 +101,12 @@
             android:text="@string/email_tls_label"
             android:textColor="@android:color/black" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/saveEmailSettingsButton"
+            style="@style/Widget.Coffre.Button.Primary"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
-            android:backgroundTint="@color/primary"
             android:text="@string/save_email_settings" />
 
     </LinearLayout>

@@ -14,15 +14,17 @@
         android:textStyle="bold"
         android:paddingBottom="8dp" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/messagesSyncButton"
-        android:layout_width="wrap_content"
+        style="@style/Widget.Coffre.Button.Primary"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/messages_sync_button" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/messagesEmailButton"
-        android:layout_width="wrap_content"
+        style="@style/Widget.Coffre.Button.Accent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:enabled="false"

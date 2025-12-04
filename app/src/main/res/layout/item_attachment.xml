@@ -26,8 +26,9 @@
             android:textColor="@android:color/darker_gray"
             android:paddingTop="4dp" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/attachmentOpenButton"
+            style="@style/Widget.Coffre.Button.Primary"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"

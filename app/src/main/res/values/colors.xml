@@ -10,6 +10,9 @@
     <color name="accent">#FFC107</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFF</color>
+    <color name="danger">#F44336</color>
+    <color name="buttonNeutral">#ECEFF1</color>
+    <color name="buttonNeutralText">#37474F</color>
 
     <!-- Colores de categoría existentes -->
     <color name="category_text_color">#5C6BC0</color>
@@ -25,4 +28,5 @@
     <color name="textPrimary">#212121</color>
     <color name="textSecondary">#757575</color>
     <color name="error">#D32F2F</color>
+    <color name="scrim">#B3000000</color>
 </resources>
